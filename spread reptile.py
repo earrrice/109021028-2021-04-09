@@ -4,7 +4,7 @@ import random
 import csv
 from bs4 import BeautifulSoup
 
-URL="https://www.majortests.com/word-lists/word-list-0{0}.html"
+URL="https://csie.asia.edu.tw/project/semester-10{0}"
 
 def generate_urls(url, start_page, end_page):
     urls = []
@@ -14,7 +14,7 @@ def generate_urls(url, start_page, end_page):
 
 def get_resource(url):
     headers={"user-agent":"Mozilla/5.0 (windows NT 10.0; Win64; x64) ApplWebKit/537.36 (KHTML, like Geck0) Chrome/63.0.3239.132 Safari/537.36"}
-    return requests.get(url, headers=headers)
+    return requests.get(url, headers=headers,verify=False)
 
 def parse_html(html_str):
     return BeautifulSoup(html_str,"lxml")
@@ -22,14 +22,13 @@ def parse_html(html_str):
 def get_word(soup,file):
     words=[]
     count=0
-    for wordlist_table in soup.find_all(class_="wordlist"):
+    for wordlist_table in soup.find_all(class_="table table-bordered table-hover"):
         count+=1
         for word_entry in wordlist_table.find_all("tr"):
             new_word=[]
             new_word.append(file)
             new_word.append(str(count))
-            new_word.append(word_entry.th.text)
-            new_word.append(word_entry.td.text)
+            new_word.append(word_entry.text)
             words.append(new_word)
         return words
 
@@ -56,9 +55,9 @@ def save_to_csv(words,file):
             writer.writerow(word)
 
 if __name__=="__main__":
-    urlx=generate_urls(URL,1,10)
+    urlx=generate_urls(URL,0,8)
     eng_words=web_scraping_bot(urlx)
     for item in eng_words:
         print(item)
-    save_to_csv(eng_words,"engWoedList 1.csv")
+    save_to_csv(eng_words," projectsList.csv")
     print(eng_words)
